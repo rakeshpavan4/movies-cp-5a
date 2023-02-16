@@ -125,13 +125,14 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
   const { directorId } = request.params;
   const getMoviesList = `
     SELECT 
-      movie.movie_name
+      *
     FROM 
-      movie INNER JOIN director ON director.directorId=movie.directorId 
+      movie 
     WHERE 
       director_id = ${directorId};`;
-  const movie = await database.get(getMoviesList);
-  response.send(convertDbObjectToResponseObject2(movie));
+  const moviesArray = await database.all(getMoviesList);
+  response.send(
+    moviesArray.map((eachMovie) => ({ movieName: eachMovie.movie_name }))
+  );
 });
-
 module.exports = app;
